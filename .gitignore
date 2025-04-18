@@ -1,4 +1,4 @@
 /onnx_env
 /onnxruntime-dev
 /protobuf
-ops/build
+/ops/build
