@@ -1,3 +1,0 @@
-/home/mcw/work/ONNX_DEV/ops/build/CMakeFiles/custom_ops.dir
-/home/mcw/work/ONNX_DEV/ops/build/CMakeFiles/edit_cache.dir
-/home/mcw/work/ONNX_DEV/ops/build/CMakeFiles/rebuild_cache.dir
