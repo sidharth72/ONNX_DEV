@@ -1,4 +1,16 @@
 /onnx_env
+/ort_env
 /onnxruntime-dev
 /protobuf
-/ops/build
+
+
+# Ignore all build directories
+/build/
+*/build/
+
+# Ignore specific build artifacts
+*.o
+*.so
+*.dll
+*.exe
+*.log

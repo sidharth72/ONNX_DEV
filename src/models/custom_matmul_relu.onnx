@@ -1,0 +1,19 @@
+
+custom_ops_example:Œ
+&
+A
+BC"CustomMatMul:test.customop
+
+CD"ReluCustomMatMulReluGraphZ
+A
+
+
+Z
+B
+
+
+b
+D
+
+
+B

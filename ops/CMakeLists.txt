@@ -1,23 +1,31 @@
 cmake_minimum_required(VERSION 3.14)
-project(CustomOps)
+project(custom_onnx_op)
 
-# Set C++ standard to 17 for std::apply
-set(CMAKE_CXX_STANDARD 17) # <--- CHANGE THIS
-set(CMAKE_CXX_STANDARD_REQUIRED True) # Ensure C++17 is used
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Manually specify ONNX Runtime paths
-set(ONNXRUNTIME_INCLUDE_DIR "/home/mcw/work/ONNX_DEV/onnxruntime-dev/include")
-# Make sure this path is correct for the Lite custom op header and base headers
-set(ONNXRUNTIME_LIBRARY "/home/mcw/work/ONNX_DEV/onnxruntime-dev/lib/libonnxruntime.so") # Link against the full lib for now
+# 🔧 ORT path
+set(ORT_DIR "/home/mcw/work/ONNX_DEV/onnxruntime-dev")
 
-# Add include directories
-include_directories(${ONNXRUNTIME_INCLUDE_DIR})
+# ✅ Include + Link dirs
+include_directories(${ORT_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include) # for custom op headers
+link_directories(${ORT_DIR}/lib)
 
-# Define the shared library from both source files
-add_library(custom_ops SHARED src/custom_ops.cc src/entry_point.cc)
+# 📁 Source files
+set(SRC_FILES
+    src/custom_ops.cc
+    custom_op_library.cc
+)
 
-# Link ONNX Runtime library
-target_link_libraries(custom_ops ${ONNXRUNTIME_LIBRARY})
+# 👇 Build shared object
+add_library(custom_op SHARED ${SRC_FILES})
 
-# Optional: Define where the output library goes
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+# ✅ Set output lib name
+set_target_properties(custom_op PROPERTIES
+    PREFIX "lib"
+    OUTPUT_NAME "custom_op"
+)
+
+# 🔗 Link ONNX Runtime
+target_link_libraries(custom_op onnxruntime)
