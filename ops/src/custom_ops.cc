@@ -3,6 +3,7 @@
 #undef ORT_API_MANUAL_INIT
 
 #include "onnxruntime_lite_custom_op.h"
+#include <cmath>
 
 #define CUSTOM_ENFORCE(cond, msg)                                \
   if (!(cond)) {                                                 \
@@ -80,6 +81,57 @@ namespace CustomOps {
         }
     };
 
+    // Custom GELU Operator
+
+    // GELU(x) = 0.5 * x * (1 + tanh(sqrt(2 / pi) * (x + 0.044715 * x^3)))
+    struct CustomGELU{
+        CustomGELU(const OrtApi*, const OrtKernelInfo*) {}
+
+        Ort::Status Compute(
+            const Ort::Custom::Tensor<float>& A, // Input tensor, supports arbitrary shape (e.g., [batch, seq_len, hidden_dim])
+            Ort::Custom::Tensor<float>& B // Output tensor, same shape as input
+        ){
+            // Retrieve the shape of the input tensor A.
+            // Example: For GPT-2 FFN, shape_A might be [batch,seq_len, 3072]
+            auto shape_A = A.Shape();
+    
+            // Compute the total number of elements in the input tensor.
+            // This allows us to process the tensor as a flat array, regardless of its original shape.
+            int64_t numel = 1;
+            for (auto d : shape_A) numel *= d;
+    
+            // Get a pointer to the raw input data (flattened by default).
+            const float* A_data = A.Data();
+    
+            // Allocate the output tensor B with the same shape as A.
+            // B_data will point to the memory where we write the GELU results.
+            float* B_data = B.Allocate(shape_A);
+    
+            // Precompute constants for the GELU formula:
+            // sqrt_2_over_pi = sqrt(2/pi) ≈ 0.7978845608
+            // coeff = 0.044715 (empirical constant for GELU)
+            constexpr float sqrt_2_over_pi = 0.7978845608f;
+            constexpr float coeff = 0.044715f;
+    
+            // Iterate over every element in the input tensor (flattened view).
+            // For each element, apply the GELU transformation:
+            // GELU(x) = 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+            for (int64_t i = 0; i < numel; ++i) {
+                float x = A_data[i];            // Current input value
+                float x_cubed = x * x * x;      // Compute x^3 for the formula
+                float inner = sqrt_2_over_pi * (x + coeff * x_cubed); // Argument to tanh
+                float tanh_inner = std::tanh(inner);                  // Nonlinear transformation
+                B_data[i] = 0.5f * x * (1.0f + tanh_inner);           // Final GELU output
+                // Shape: Each output element corresponds to the input element at the same index.
+            }
+    
+            // Output tensor B now contains the GELU-activated values, with the same shape as input A.
+            return Ort::Status{nullptr};
+        }
+        
+
+    };
+
 
 
 // Registration of the custom operator
@@ -92,8 +144,16 @@ void RegisterOps(Ort::CustomOpDomain& domain) {
         )
     };
 
+    static const std::unique_ptr<OrtLiteCustomOp> c_CustomGELU{
+        Ort::Custom::CreateLiteCustomOp<CustomGELU>(
+            "CustomGELU",
+            "CPUExecutionProvider"
+        )
+    };
+
     // Register the custom operator with the domain
     domain.Add(c_CustomMatMul.get());
+    domain.Add(c_CustomGELU.get());
 
 }
 

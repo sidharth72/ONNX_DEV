@@ -2,6 +2,7 @@
 /ort_env
 /onnxruntime-dev
 /protobuf
+/models
 
 
 # Ignore all build directories

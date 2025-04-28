@@ -12,17 +12,19 @@ custom_node = helper.make_node(
     'CustomMatMul',
     inputs=['A', 'B'],
     outputs=['C'],
-    domain='test.customop'
+    domain='ai.onnx.custom'
 )
 
-relu_node = helper.make_node(
-    'Relu',
+
+gelu_node = helper.make_node(
+    'CustomGELU',
     inputs=['C'],
-    outputs=['D']
+    outputs=['D'],
+    domain = "ai.onnx.custom"
 )
 
 graph = helper.make_graph(
-    [custom_node, relu_node],
+    [custom_node, gelu_node],
     'CustomMatMulReluGraph',
     [A, B],
     [D]
@@ -32,7 +34,7 @@ model = helper.make_model(graph, producer_name='custom_ops_example')
 onnx.save(model, 'models/custom_matmul_relu.onnx')
 
 # 2. Register custom op library and run inference
-so_path = '/home/mcw/work/ONNX_DEV/ops/build/libcustom_op.so'
+so_path = '/home/mcw/sidharth/ONNX_DEV/ops/build/libcustom_op.so'
 sess_options = ort.SessionOptions()
 sess_options.register_custom_ops_library(so_path)
 

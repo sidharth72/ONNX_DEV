@@ -13,7 +13,7 @@
 #include "custom_ops.h"
 #include "onnxruntime_lite_custom_op.h"
 
-static const char* c_OpDomain = "test.customop";
+static const char* c_OpDomain = "ai.onnx.custom";
 
 
 // Create a container to store the custom op library
