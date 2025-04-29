@@ -1,10 +1,12 @@
-# Trace the ONNX model computation graph, compare the output to the PyTorch model outputs
-# to determine the breakpoint, and then replace those nodes with custom ops.
+# Trace the computation graph of a model, find the series of operations that is corresponding
+# to the custom GELU operator that we are going to fuse, replace those, clean the graph
+# with onnx-graphsurgeon, and save the new model.
 
 import onnx
 import re
 import onnx_graphsurgeon as gs
-model = onnx.load('models/onnx_models/gpt2_124M.onnx')
+
+model = onnx.load("models/onnx_models/gpt2_124M.onnx")
 graph = model.graph
 
 reshape_re = re.compile(r"transformer/h\.\d+/mlp/c_fc/Reshape_1_output_0")
@@ -27,9 +29,9 @@ for node in graph.node:
         gelu = onnx.helper.make_node(
             "CustomGELU",
             inputs=[mid_name],
-            outputs=[orig_mul],          # now overriding the Mul’s original output
+            outputs=[orig_mul],  # now overriding the Mul’s original output
             domain="ai.onnx.custom",
-            name=node.name + "_CustomGELU"
+            name=node.name + "_CustomGELU",
         )
         new_nodes.append(gelu)
 
@@ -52,4 +54,4 @@ model = gs.export_onnx(gs_graph)
 onnx.checker.check_model(model)
 
 # Finally, save it
-onnx.save(model, 'models/onnx_models/gpt2_124M_custom.onnx')
+onnx.save(model, "models/onnx_models/gpt2_124M_custom.onnx")

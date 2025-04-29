@@ -2,15 +2,17 @@ import onnxruntime as ort
 from transformers import GPT2Tokenizer
 import numpy as np
 
+
 def load_session(onnx_path: str):
     # Enable all available optimizations in ORT
     sess_opts = ort.SessionOptions()
 
     # Custom ops library path
-    so_path = '/home/mcw/sidharth/ONNX_DEV/ops/build/libcustom_op.so'
+    so_path = "/home/mcw/sidharth/ONNX_DEV/ops/build/libcustom_op.so"
     sess_opts.register_custom_ops_library(so_path)
     sess_opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
     return ort.InferenceSession(onnx_path, sess_opts)
+
 
 def generate_with_onnx(session, tokenizer, prompt: str, max_length: int = 50):
     # Tokenize prompt
@@ -41,12 +43,10 @@ def generate_with_onnx(session, tokenizer, prompt: str, max_length: int = 50):
 
 
 if __name__ == "__main__":
-    onnx_model = "/home/mcw/sidharth/ONNX_DEV/models/onnx_models/gpt2_124M_custom.onnx"
+    onnx_model = "/home/mcw/sidharth/ONNX_DEV/models/onnx_models/gpt2_124M.onnx"
     prompt = "Once upon a time"
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     session = load_session(onnx_model)
-
-
 
     while True:
 
