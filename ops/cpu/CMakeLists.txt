@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # 🔧 ORT path
-set(ORT_DIR "/home/mcw/work/ONNX_DEV/onnxruntime-dev")
+set(ORT_DIR "/home/mcw/sidharth/ONNX_DEV/onnxruntime-cpu")
 
 # ✅ Include + Link dirs
 include_directories(${ORT_DIR}/include)
@@ -26,6 +26,3 @@ set_target_properties(custom_op PROPERTIES
     PREFIX "lib"
     OUTPUT_NAME "custom_op"
 )
-
-# 🔗 Link ONNX Runtime
-target_link_libraries(custom_op onnxruntime)

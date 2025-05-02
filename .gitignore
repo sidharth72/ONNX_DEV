@@ -1,6 +1,8 @@
 /onnx_env
-/ort_env
-/onnxruntime-dev
+/ort_cpu
+/ort_cuda
+/onnxruntime-cpu
+/onnxruntime-cuda
 /protobuf
 /models
 

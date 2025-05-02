@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -shared -Wl,-soname,libcustom_op.so -o libcustom_op.so CMakeFiles/custom_op.dir/src/custom_ops.cc.o CMakeFiles/custom_op.dir/custom_op_library.cc.o   -L/home/mcw/sidharth/ONNX_DEV/onnxruntime-cpu/lib 

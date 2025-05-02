@@ -6,7 +6,7 @@ import onnx
 import re
 import onnx_graphsurgeon as gs
 
-model = onnx.load("models/onnx_models/gpt2_124M.onnx")
+model = onnx.load("/home/mcw/sidharth/ONNX_DEV/models/onnx_models/gpt2_124M.onnx")
 graph = model.graph
 
 reshape_re = re.compile(r"transformer/h\.\d+/mlp/c_fc/Reshape_1_output_0")
@@ -27,7 +27,7 @@ for node in graph.node:
         orig_mul = node.output[0]
 
         gelu = onnx.helper.make_node(
-            "CustomGELU",
+            "CustomCUDAGELU",
             inputs=[mid_name],
             outputs=[orig_mul],  # now overriding the Mul’s original output
             domain="ai.onnx.custom",
@@ -54,4 +54,6 @@ model = gs.export_onnx(gs_graph)
 onnx.checker.check_model(model)
 
 # Finally, save it
-onnx.save(model, "models/onnx_models/gpt2_124M_custom.onnx")
+onnx.save(
+    model, "/home/mcw/sidharth/ONNX_DEV/models/onnx_models/gpt2_124M_custom_cuda.onnx"
+)

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace CustomOps {
+namespace CustomCPUOps {
 
 void RegisterOps(Ort::CustomOpDomain& domain);
 

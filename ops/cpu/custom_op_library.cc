@@ -32,7 +32,7 @@ OrtStatus* ORT_API_CALL RegisterCustomOps(OrtSessionOptions* options, const OrtA
 
     try {
         Ort::CustomOpDomain domain{c_OpDomain};
-        CustomOps::RegisterOps(domain); // Version 1.0
+        CustomCPUOps::RegisterOps(domain); // Version 1.0
 
         // Multiple versions can be added to the same domain
         // domain.Add(CustomOps::CustomMatMulV2());

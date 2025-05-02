@@ -13,7 +13,7 @@
 
 using namespace Ort::Custom;
 
-namespace CustomOps {
+namespace CustomCPUOps {
 
     struct CustomMatMul {
         CustomMatMul(const OrtApi*, const OrtKernelInfo*) {}
@@ -157,4 +157,4 @@ void RegisterOps(Ort::CustomOpDomain& domain) {
 
 }
 
-} // namespace CustomOps
+} // namespace CustomCPUOps
