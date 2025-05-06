@@ -8,6 +8,9 @@
 
 
 # Ignore all build directories
+ops/cpu/build/
+ops/cuda/build/
+
 /build/
 */build/
 
