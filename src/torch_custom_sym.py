@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from torch.onnx import register_custom_op_symbolic
 
+# Torch custom op definition and immplementation
+
 
 class CustomConv2d(torch.autograd.Function):
     @staticmethod
@@ -88,7 +90,7 @@ torch.onnx.export(
     "../models/onnx_models/custom_ops_torch_export.onnx",
     input_names=["X", "W", "A", "B", "Shape"],
     output_names=["YReshaped", "YConcat"],
-    opset_version=13,
+    opset_version=17,
     custom_opsets={"customdomain": 17},
 )
 
